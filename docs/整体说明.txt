@@ -1,0 +1,29 @@
+1.操作数据流： 
+  流程1: 下载原始数据  -> 使用原始数据进行重归因写db ->  通过原始数据以及重归因的db数据写入到es进行分析
+  执行一次 BI.FromToTask.exe_from_to_task 可以执行完整的一次上述流程1
+
+2.执行整个流程中的控制
+
+  BI.FromToTask.exe_from_to_task 提供了 ops和 types 参数
+  ops 包含本次的操作： [:download, :write_to_db, :write_to_es]
+  types 包含本次操作的数据类型： [:install, :reinstall, :event]
+  
+  如果整个流程第一次正式的完整执行，ops和types就是完整的
+  如果是测试或调试或写入历史数据时，通常需要根据需求进行调整，比如以前已经下载过原始数据了，ops就不应该包含download操作，避免重复下载
+
+
+3.执行写入过程中的控制
+  在写入db和es的过程中的时间可能会有重复（比如以以天为单位进行，又以周为单位进行一次完整的写入）这样写入的数据就不准确
+  每次写DB和写es时都会进行一次数据库的写标记检查，已确定是否已经写过，如果写过就不会再写
+  写标记的控制在： 
+  write_af_to_es_gg.ex 和 write_af_to_db_gg.ex  
+  db_flag_pre_config 中会有控制,
+  如果需要重复写入，比如测试需要，需要先删除es上的数据后再修改前缀信息后重新写入
+  特别说明：db的数据无需删除（一般db的归因有时间来做了处理，只需要修改前缀信息后重新再计算一次重归因后写入即可）
+
+
+4.数据访问地方
+  原始数据： 项目/download_data 
+  db数据： BI.Config中的表名
+  es数据： kibana进行访问，数据的格式为： 事件名 + from + to 
+          具体可参考： BI.Global 中的 es_event_install 

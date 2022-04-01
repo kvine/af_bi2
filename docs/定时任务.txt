@@ -1,0 +1,70 @@
+创建定时任务：
+
+last_week, last_day, cur_day
+每个星期1的上午10点获取当天的数据
+每个星期1的下午10:00 获取上一整周的数据
+每天的下午17:00 获取上一天的数据
+
+last_week: 
+
+%{
+  last_week: [
+    %{
+      week_day: 2, #周2下午10点获取上一整周的数据（按周将数据进行归档）
+      time: 22:00,
+      data_type: week,
+    }
+    ],
+
+  cur_week: [], 
+
+  last_day: [
+    %{
+      week_day: every_day,  #每天下午17:00获取上一天的数据
+      time: 17:00,
+      data_type: day, 
+    }
+  ], 
+
+  cur_day: [
+    %{
+     week_day: 1, #周一上午10点获取当天的数据 （review需要，下午的提前了）
+     time: 10:00,
+     data_type: day,
+  }]
+}
+
+
+数据库中记录状态变化： 
+create_time, start_time, end_time, create_date, start_date, status, details, task_type, week_start_date, week_day
+
+create_time: hash_key
+start_time: range_key
+
+week_start_date: start_time所在的周的开始时间， index  "2016-02-29“
+week_day: 第几天
+
+
+
+
+流程：
+1.进程读取配置设置定时器
+2.定时器触发：
+   检查当前的定时器是否是设置的定时器
+   如果是设置的定时器，设置下一次定时器并执行本次定时器的任务
+   执行完成任务后写数据库，记录信息到数据库中，并将进程中的当前的task删除
+
+task: %{
+  create_time: 
+  start_time:
+  end_time: 
+  status:  #undo, doing, success, fail
+  task_type: #last_week, cur_week, last_day, cur_day 
+  timer: timer
+}
+
+
+
+
+
+

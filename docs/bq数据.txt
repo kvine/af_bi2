@@ -1,0 +1,97 @@
+获取bq的remove数据 -> dynamodb
+
+提供函数按时间段获取bq的reomve数据， remove数据内容包括： 
+advertising_id, event_timestamp, event_date
+
+获取数据的函数格式为： 
+GetBQRemoveData(table_prefix, from, to)
+table_prefix: 表前缀， “golf-master-3d-b7e08.analytics_278530771”， 真实表名需要根据日期生成
+from: "2021-09-06"
+to: "2021-10-03"
+
+
+
+dynamodb： 
+表： golf_bq_uninstall
+列： advertising_id, event_timestamp, event_date
+
+advertising_id： hash_key  例：“a2ee3d59-7df0-4fb0-b5f0-a81dd94eb30d”， 
+event_timestamp： range_key， 例： 1641359897461000,  毫秒， 注意BQ获取的是微妙，需要除以1000取整
+event_date： 字符串， 例：“20220105”
+
+
+使用Uninstall的重归因逻辑： 
+1.只对美国用户进行处理，其它国家的暂不考虑
+2.独立于之前的重归因逻辑，单独实现归因
+
+具体实现： 
+1.install安装和reinstall安装写入同一张数据库表中 in_re_install
+2.写入表的具体逻辑为： 
+  处理install数据：
+    在原AF的数据基础上，添加afid_7d, afid_14d，且添加 is_reinstall 为 false
+    计算afid_7d：获取到uninstall的时间t，如果当前的时间 t0 - t <= 7d, 查询最近t时间的一次 install｜reinstall数据，
+    以查询到的数据中的afid做为当前的afid, 添加 is_reattr_7d 为 true
+    如果 t0 - t > 7d, 保留当前的渠道信息，添加 is_reattr_7d 为 false
+    
+    注意： 因为数据不完整，比如没有uninstall数据的情况则无法进行计算，直接使用最近一次的数据就不准确
+          将afid_7d设置为““nil_unitime”，is_reattr_7d 为false
+          超过窗口期的情况，将afid_7d设置为"over_wnd", is_reattr_7d 为false 
+          有可能出现没有以前数据的情况，将afid_7d设置为“nil", is_reattr_7d 为false
+         
+    此处的详细处理为(因为数据不完整，比较复杂，原则是尽量的保留非organic的渠道信息）： 
+      如果没有uninstall数据， afid_7d: "nil_unitime", is_reattr_7d: false 
+      如果超过窗口期， afid_7d: "over_wnd", is_reattr_7d: false 
+      如果通过uninstall数据进行上一次数据查询， 未查询到上次install/reinstall数据， afid_7d: "nil", is_reattr_7d: false 
+      如果查询到上一次的install/reinstall数据 last_data 则： 
+        获取上一次 last_afid_7d, 通过last_afid_7d进行如下判断
+        last_afid_7d: "nil_unitime" | "over_wnd" | "nil"
+          如果 last_data的渠道信息为organic， 而当前为非organic， 则 afid_7d 就为当前的afid
+          否则，afid_7d为 last_afid_7d 
+        last_afid_7d: "xxx"
+          获取 last_afid_7d 对应的数据 last_data2
+          如果 last_data2 的渠道信息为organic， 而当前为非organic， 则 afid_7d 就为当前的afid
+          否则，afid_7d为 last_afid_7d
+           
+        is_reattr_7d 为: true 
+
+
+  处理reinstall数据： 
+    同上处理，且标记 is_reinstall 为 true 
+  处理purchase数据：
+    无需处理
+3.写入kibana的逻辑为： 
+    处理install｜reinstall数据： 
+      先读取数据库中的数据，在原有数据基础上，添加
+      is_reinstall: 表示是否是af的reinstall
+      re_attr_data： %{
+        origin: %{
+            media_source,
+            channel, 
+            campaign,
+            adset, 
+            country, 
+            app_ver,
+            afid: 
+            install_time:  #重归因后的安装时间
+            install_time_stamp:  #重归因后的安装时间戳
+        }
+
+        d7: %{  #如果未获取到重归因的信息（is_rein为false），那么对应的数据就和origin一样
+            is_reattr:  #表示是否进行了重归因
+            media_source,
+            channel, 
+            campaign,
+            adset, 
+            country, 
+            app_ver,
+            afid: 
+            install_time:  #重归因后的安装时间
+            install_time_stamp:  #重归因后的安装时间戳
+        }
+        d14: %{
+
+        }
+      }
+
+      处理purchase数据： 
+      同上处理，添加内购数据即可
