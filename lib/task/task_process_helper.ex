@@ -14,7 +14,7 @@ defmodule Game.TaskProcessHelper do
     end 
 
     def confings() do 
-        BI.Task.Protocol.task_process_configs(:any)
+        BI.TaskProcess.Protocol.task_process_configs(:any)
     end 
 
     def config(task_type, week_day, day_time, task_module) do 
