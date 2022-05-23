@@ -39,14 +39,15 @@ def write_one_install_data_to_db(data, reinstall_strategy) do
             Logger.error("DB.WriteAFToDBFlag.is_exist error #{inspect reason}")
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
             {:ok, :exist}
         false -> 
             data= wrap_in_reinstall_item(reinstall_strategy, data, false)
             ##计算data 存储到db
             case DB.AFInReinstallGG.put_item(data) do 
                 {:error,reason} -> 
-                    Logger.error("DB.AFInReinstallGG.put_item error  #{inspect reason}")
+                    # Logger.error("DB.AFInReinstallGG.put_item error  #{inspect reason}")
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -87,12 +88,13 @@ def write_one_reinstall_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
            {:ok, :exist}
         false -> 
             data= wrap_in_reinstall_item(reinstall_strategy, data, true)
             case DB.AFInReinstallGG.put_item(data) do 
                 {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -258,11 +260,12 @@ def write_one_purchase_event_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
             {:ok, :exist} 
         false -> 
             case DB.AFPurchaseEvent.put_item(data) do 
                 {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{

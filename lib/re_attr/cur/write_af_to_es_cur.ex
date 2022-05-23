@@ -63,12 +63,13 @@ def write_one_purchase_event_data_to_es(es_event_name,data, reinstall_strategy) 
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to af exist")
             {:ok, :exist}
         false -> 
             data= wrap_purchase_event_data(es_event_name,data, reinstall_strategy)
             case ES.Helper.request(data) do 
                 {:error,reason} -> 
+                    Logger.info("to af error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -145,12 +146,13 @@ def write_one_reinstall_data_to_es(es_event_name,data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to af exist")
             {:ok, :exist}
         false -> 
             data= wrap_reinstall_item(es_event_name,data, reinstall_strategy)
             case ES.Helper.request(data) do 
                 {:error,reason} -> 
+                    Logger.info("to af error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -282,12 +284,13 @@ def write_one_install_data_to_es(es_event_name, data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to af exist")
              {:ok, :exist}
         false -> 
             data= wrap_install_data(es_event_name, data)
             case ES.Helper.request(data) do 
                 {:error,reason} -> 
+                    Logger.info("to af error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{

@@ -32,11 +32,12 @@ def write_one_install_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
             {:ok, :exist}
         false -> 
             case DB.AFInstall.put_item(data) do 
                 {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -75,13 +76,14 @@ def write_one_reinstall_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
            {:ok, :exist}
         false -> 
             data= wrap_reinstall_item(reinstall_strategy, data)
             reinstall_db_module=  BI.Global.get_reinstall_db_module(reinstall_strategy)
             case reinstall_db_module.put_item(data) do 
                 {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
@@ -312,11 +314,12 @@ def write_one_purchase_event_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            # Logger.info("exist")
+            Logger.info("to db exist")
             {:ok, :exist} 
         false -> 
             case DB.AFPurchaseEvent.put_item(data) do 
                 {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
                     {:error,reason}  
                 {:ok, _ } ->
                     item= %{
