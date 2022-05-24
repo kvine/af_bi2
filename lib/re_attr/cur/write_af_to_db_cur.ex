@@ -32,7 +32,7 @@ def write_one_install_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            Logger.info("to db exist")
+            Logger.info("to db exist, #{inspect write_flag_comb_id}")
             {:ok, :exist}
         false -> 
             case DB.AFInstall.put_item(data) do 
@@ -76,7 +76,7 @@ def write_one_reinstall_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            Logger.info("to db exist")
+            Logger.info("to db exist, #{inspect write_flag_comb_id}")
            {:ok, :exist}
         false -> 
             data= wrap_reinstall_item(reinstall_strategy, data)
@@ -314,7 +314,7 @@ def write_one_purchase_event_data_to_db(data, reinstall_strategy) do
         {:error,reason} -> 
             {:error,reason} 
         true -> 
-            Logger.info("to db exist")
+            Logger.info("to db exist, #{inspect write_flag_comb_id}")
             {:ok, :exist} 
         false -> 
             case DB.AFPurchaseEvent.put_item(data) do 
