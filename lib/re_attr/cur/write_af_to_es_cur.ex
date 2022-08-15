@@ -14,6 +14,7 @@ end
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
     path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
     datas= ReadCSV.read(path)
+    datas= ReadCSV.datas_filter_country_by_data_type(datas, data_type)
     do_request(data_type, from, to, path, datas, reinstall_strategy) 
 end 
 

@@ -2,6 +2,20 @@
 defmodule ReadCSV do 
 require Logger
 
+    @doc """
+        为了减少log服务器的请求处理，非重要事件只处理美国   
+        如果是内购事件数据，不过滤
+        否则，进行过滤只保留美国
+    """
+    def datas_filter_country_by_data_type(datas, data_type) do 
+        if data_type == BI.Keys.data_type_purchase_event do 
+            datas 
+        else 
+            Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
+        end 
+    end 
+    
+
     # ReadCSV.read("download_data/com.sm.golfmaster_installs_2021-11-15_2021-11-21_America_Los_Angeles.csv")
     # ReadCSV.read("download_data/purchase-event_non-organic/purchase-event_non-organic_2021-11-15_2021-11-21_America_Los_Angeles.csv")
     # l=ReadCSV.read("download_data/reinstall_non-organic/reinstall_non-organic_2021-09-06_2021-10-03_America_Los_Angeles.csv")
