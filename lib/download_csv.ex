@@ -32,11 +32,14 @@ require Logger
         "https://hq.appsflyer.com/export/{appid}/organic_in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
     end 
 
+    def daily_report_template() do 
+        # https://hq.appsflyer.com/export/com.sm.golfmaster/geo_by_date_report/v5?api_token={Account owner API key should be used}&from=yyyy-mm-dd&to=yyyy-mm-dd&timezone=America%2fLos_Angeles
+        "https://hq.appsflyer.com/export/{appid}/geo_by_date_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}"
+    end 
 
     # DownloadCSv.save_path_template
     def save_path_template() do 
         project_path= BI.Config.project_path()
-        # download_path= "download_data/{data_type}_{source_type}/{data_type}_{source_type}_{from}_{to}_{timezone}.csv"
         Path.join(project_path, download_path())
     end 
 
@@ -134,6 +137,8 @@ require Logger
                         source_type == BI.Keys.source_type_non_organic() -> 
                             non_organic_purchase_event_url_template()
                     end 
+                data_type == BI.Keys.data_type_daily_report() ->
+                    daily_report_template()
             end 
         #先给decode下，防止之前误写的格式有问题
         timezone=  URI.decode(timezone) |> URI.encode_www_form

@@ -4,7 +4,11 @@ require Logger
 # WriteAFToES.test_request()
 def test_request(data_type, source_type, from, to, timezone, reinstall_strategy, af_id) do 
     path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
-    datas= ReadCSV.read(path)
+    datas= if BI.Common.is_report_data(data_type) do 
+        ReadCSV.read_report_data(path)
+    else
+        ReadCSV.read(path)
+    end 
     datas= Enum.filter(datas, fn(x)-> Map.get(x, "AppsFlyer ID") == af_id end)
     do_request(data_type, from, to, path, datas, reinstall_strategy) 
 end 
@@ -13,7 +17,11 @@ end
 # -> {result, cnt, success_cnt}
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
     path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
-    datas= ReadCSV.read(path)
+    datas= if BI.Common.is_report_data(data_type) do 
+        ReadCSV.read_report_data(path)
+    else
+        ReadCSV.read(path)
+    end 
     datas= ReadCSV.datas_filter_country_by_data_type(datas, data_type)
     do_request(data_type, from, to, path, datas, reinstall_strategy) 
 end 
@@ -43,6 +51,11 @@ def do_request(data_type, from, to, path, datas, reinstall_strategy) do
             es_event_name= BI.Global.es_event_purchase_event(from, to, reinstall_strategy)
             r= write_purchase_event_data_to_es(es_event_name, datas, reinstall_strategy)
             Logger.error("write_purchase_event_data: path=#{inspect path}, \n result1=#{inspect r}")
+            r
+        data_type == BI.Keys.data_type_daily_report -> 
+            es_event_name= BI.Global.es_daily_report_event(from, to, reinstall_strategy)
+            r= write_daily_report_data_to_es(es_event_name, datas, reinstall_strategy)
+            Logger.error("write_daily_report_data: path=#{inspect path}, \n result1=#{inspect r}")
             r
     end 
 end 
@@ -96,6 +109,68 @@ def write_purchase_event_data_to_es(es_event_name,datas, reinstall_strategy) do
                 end 
             {result, cnt + 1, success_cnt}
     end )
+end 
+
+
+# -> {result, cnt, success_cnt}
+def write_daily_report_data_to_es(es_event_name,datas, _reinstall_strategy) do
+    total= length(datas)
+    List.foldl(datas, {true, 0, 0}, fn(x, {result, cnt, success_cnt}) ->  
+            Logger.info("event progress: #{inspect cnt}/#{inspect total}")
+            {result, success_cnt}= 
+                case write_one_daily_report_data_to_es(es_event_name,x) do 
+                    {:ok, _} -> 
+                        {result, success_cnt + 1}
+                    _ -> 
+                        {false, success_cnt}
+                end 
+            {result, cnt + 1, success_cnt}
+    end )
+end 
+
+
+# -> {:ok, term}| {:error, reason}
+def write_one_daily_report_data_to_es(es_event_name,data) do
+    db_flag_pre= Map.get(db_flag_pre_config(:normal), BI.Keys.atom_daily_report)
+    write_flag_comb_id= BI.Common.get_write_flag_comb_id_key(db_flag_pre, BI.Keys.atom_daily_report, data, :es) 
+    case DB.WriteAFToESFlag.is_exist?(write_flag_comb_id) do 
+        {:error,reason} -> 
+            {:error,reason} 
+        true -> 
+           Logger.info("to af exist, #{inspect write_flag_comb_id}")
+            {:ok, :exist}
+        false -> 
+            data= wrap_daily_report_event_data(es_event_name,data)
+            case ES.Helper.request(data) do 
+                {:error,reason} -> 
+                    Logger.info("to af error,reason=#{inspect reason}")
+                    {:error,reason}  
+                {:ok, _ } ->
+                    item= %{
+                        comb_id: write_flag_comb_id,
+                        time: Time.Util.time_string()
+                    }
+                    DB.WriteAFToESFlag.put_item(item) 
+            end 
+    end 
+end 
+
+# -> %{}
+def wrap_daily_report_event_data(es_event_name,data) do 
+    es_data=%{
+        date: Map.get(data, BI.Keys.af_report_date),
+        # date_time_stamp, #utc时间戳
+        country: Map.get(data, BI.Keys.af_report_country),
+        media_source: Map.get(data, BI.Keys.af_report_media_source),
+        campaign: Map.get(data, BI.Keys.af_report_campaign),
+        impressions: Map.get(data, BI.Keys.af_report_impressions),
+        clicks: Map.get(data, BI.Keys.af_report_clicks),
+        ctr: Map.get(data, BI.Keys.af_report_ctr),
+        installs: Map.get(data, BI.Keys.af_report_installs),
+        conversion: Map.get(data, BI.Keys.af_report_conversion),
+        cost: Map.get(data, BI.Keys.af_reprot_cost),
+    }
+    es_data |> Map.put(:event, es_event_name)
 end 
 
 

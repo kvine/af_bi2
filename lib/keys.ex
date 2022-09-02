@@ -1,5 +1,8 @@
 defmodule BI.Keys do 
 
+###########################################################################
+### AF 普通原始数据中的属性名
+###########################################################################
     def af_media_source, do: "Media Source"
     def af_channel, do: "Channel"
     def af_campaign, do: "Campaign"
@@ -26,7 +29,23 @@ defmodule BI.Keys do
     def af_attrbiution_lookback, do: "Attribution Lookback"
     def af_revenue, do: "Event Revenue"
     
+###########################################################################
+### AF 聚合报告中原始数据的属性名
+###########################################################################
+    def af_report_media_source, do: "Media Source (pid)"
+    def af_report_date, do: "Date"
+    def af_report_country, do: "Country"
+    def af_report_campaign, do: "Campaign (c)"
+    def af_report_impressions, do: "Impressions"
+    def af_report_clicks, do: "Clicks"
+    def af_report_ctr, do: "CTR"
+    def af_report_installs, do: "Installs"
+    def af_report_conversion, do: "Conversion Rate"
+    def af_reprot_cost, do: "Total Cost"
 
+###########################################################################
+### 自定义相关
+###########################################################################
     def af_time_format, do: "YYYY-MM-DD HH:MM:SS"
 
 
@@ -53,13 +72,26 @@ defmodule BI.Keys do
     def ex_is_reattr, do: "is_reattr"
 
 
+    def ex_date_country, do: "date_country"
+    def ex_mediasource_campaign, do: "mediasource_campaign"
 
+
+###########################################################################
+### 数据类型定义
+###########################################################################
     def data_type_install, do: "install"
     def data_type_reinstall, do: "reinstall"
+    def data_type_daily_report, do: "daily-report"
+
     def data_type_purchase_event, do: "purchase-event"
     def source_type_organic, do: "organic"
     def source_type_non_organic, do: "non-organic"
+    def source_type_nil, do: "type-nil"
 
+    def atom_install, do: :install 
+    def atom_reinstall, do: :reinstall
+    def atom_event, do: :event
+    def atom_daily_report, do: :daily_report
 
 
 end 

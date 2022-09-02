@@ -30,6 +30,7 @@ def db_table_name_reinstall_gg, do: Application.get_env(:af_bi, :table_reinstall
 def db_table_name_bq_uninstall, do: Application.get_env(:af_bi, :table_bq_uninstall, "nil")
 def db_table_name_task, do: Application.get_env(:af_bi, :table_task, "nil")
 def db_table_name_in_reinstall_gg, do: Application.get_env(:af_bi, :table_install_reinstall_gg, "nil")
+def db_table_name_daily_report, do: Application.get_env(:af_bi, :table_daily_report, "nil")
 
 #####BQ###
 def bq_table_prefix, do: Application.get_env(:af_bi, :bq_table_prefix, "nil")

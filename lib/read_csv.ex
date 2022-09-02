@@ -14,8 +14,42 @@ require Logger
             Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
         end 
     end 
-    
+  
+################################################################################
+### 聚合数据读取
+################################################################################
+    def read_report_data(path) do 
+        datas= 
+            File.stream!(path) |> 
+            CSV.decode(headers: true) |>
+            Enum.to_list() |>  
+            Keyword.get_values(:ok) |>
+            Enum.map(fn(data) -> 
+                {date_country, mediasource_campaign}= get_report_data_key(data)
+                data |> 
+                    Map.put(BI.Keys.ex_date_country, date_country) |> 
+                    Map.put(BI.Keys.ex_mediasource_campaign, mediasource_campaign)
+            end )
+        length1= length(datas)
+        Logger.error("report data: total=#{inspect length1}")
+        Enum.reverse(datas)
+    end 
 
+
+    # -> {date_country, mediasource_campaign}
+    def get_report_data_key(data) do 
+        date= Map.get(data, BI.Keys.af_report_date)
+        country= Map.get(data, BI.Keys.af_report_country)
+        media_source= Map.get(data, BI.Keys.af_report_media_source)
+        campaign= Map.get(data, BI.Keys.af_report_campaign)
+        {date<>"_"<>country, media_source<>"_"<>campaign}
+    end 
+
+
+
+################################################################################
+### 原始数据读取
+################################################################################
     # ReadCSV.read("download_data/com.sm.golfmaster_installs_2021-11-15_2021-11-21_America_Los_Angeles.csv")
     # ReadCSV.read("download_data/purchase-event_non-organic/purchase-event_non-organic_2021-11-15_2021-11-21_America_Los_Angeles.csv")
     # l=ReadCSV.read("download_data/reinstall_non-organic/reinstall_non-organic_2021-09-06_2021-10-03_America_Los_Angeles.csv")

@@ -4,28 +4,37 @@ require  Logger
 # BI.Common.get_write_flag_comb_id_key
 def get_write_flag_comb_id_key(db_flag_pre, type, data, target_type) do 
     # Logger.info("data=#{inspect data}")
-    did= Map.get(data, BI.Keys.ex_did)
-    afid= Map.get(data, BI.Keys.af_appsflyer_id)
-    event_time= Map.get(data, BI.Keys.af_event_time)
-    andrid= Map.get(data, BI.Keys.af_android_id)
-    if did == nil do 
-        Logger.info("did=#{inspect did}, afid=#{inspect afid}, andrid=#{inspect andrid}")
-    end 
-    is_es= target_type == :es
-    case type do 
-        :install -> 
-            if is_es do 
-                db_flag_pre<>"__"<>"0__"<>did<>"__"<>afid<>"__"<>event_time #af中的install数据中有一些问题（有极少数重复did和afid），这里为了和af控制台一致
-            else 
-                db_flag_pre<>"__"<>"0__"<>did<>"__"<>afid
-            end 
-        :reinstall -> 
-            db_flag_pre<>"__"<>"1__"<>did<>"__"<>afid
-        :event -> 
-            db_flag_pre<>"__"<>"2__"<>did<>"__"<>afid<>"__"<>event_time
+    if is_report_data(type) do
+        date_country= Map.get(data, BI.Keys.ex_date_country)
+        mediasource_campaign= Map.get(data, BI.Keys.ex_mediasource_campaign)
+        db_flag_pre<>"__"<>date_country<>"__"<>mediasource_campaign
+    else 
+        did= Map.get(data, BI.Keys.ex_did)
+        afid= Map.get(data, BI.Keys.af_appsflyer_id)
+        event_time= Map.get(data, BI.Keys.af_event_time)
+        andrid= Map.get(data, BI.Keys.af_android_id)
+        if did == nil do 
+            Logger.info("did=#{inspect did}, afid=#{inspect afid}, andrid=#{inspect andrid}")
+        end 
+        is_es= target_type == :es
+        case type do 
+            :install -> 
+                if is_es do 
+                    db_flag_pre<>"__"<>"0__"<>did<>"__"<>afid<>"__"<>event_time #af中的install数据中有一些问题（有极少数重复did和afid），这里为了和af控制台一致
+                else 
+                    db_flag_pre<>"__"<>"0__"<>did<>"__"<>afid
+                end 
+            :reinstall -> 
+                db_flag_pre<>"__"<>"1__"<>did<>"__"<>afid
+            :event -> 
+                db_flag_pre<>"__"<>"2__"<>did<>"__"<>afid<>"__"<>event_time
+        end 
     end 
 end 
 
+def is_report_data(data_type) do 
+    data_type ==  BI.Keys.atom_daily_report
+end 
 
 def is_organic(media_source) do 
     media_source == "" or media_source == "organic"

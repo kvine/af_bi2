@@ -18,6 +18,10 @@ def do_task(:download, from, to, types) do
         DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, from, to, BI.Config.timezone) 
     end 
 
+    if(Enum.member?(types, :daily_report)) do 
+        DownloadCSv.request(BI.Keys.data_type_daily_report, BI.Keys.source_type_nil, from, to, BI.Config.timezone) 
+    end 
+
     Logger.info("FromToTask: from=#{inspect from}, to=#{inspect to}, download, end")
 end 
 
@@ -38,6 +42,10 @@ def do_task(:write_to_db, from, to, types) do
     if(Enum.member?(types, :event)) do 
         WriteAFToDB.request(WriteAFToDB.Cur, BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone, :normal) 
         WriteAFToDB.request(WriteAFToDB.Cur, BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, from, to, BI.Config.timezone, :normal) 
+    end 
+
+    if(Enum.member?(types, :daily_report)) do 
+        WriteAFToDB.request(WriteAFToDB.Cur, BI.Keys.data_type_daily_report, BI.Keys.source_type_nil, from, to, BI.Config.timezone, :normal) 
     end 
 
 
@@ -66,6 +74,10 @@ def do_task(:write_to_es, from, to, types) do
     if(Enum.member?(types, :event)) do 
         WriteAFToES.request(WriteAFToES.Cur, BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone, :normal) 
         WriteAFToES.request(WriteAFToES.Cur, BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, from, to, BI.Config.timezone, :normal)   
+    end 
+
+    if(Enum.member?(types, :daily_report)) do 
+        WriteAFToES.request(WriteAFToES.Cur, BI.Keys.data_type_daily_report, BI.Keys.source_type_nil, from, to, BI.Config.timezone, :normal) 
     end 
 
     # #reinstall_strategy gg

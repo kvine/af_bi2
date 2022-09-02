@@ -3,7 +3,7 @@ require Logger
 
 
 # ops: [:download, :write_to_db, :write_to_es]
-def exe_from_to_task(moudle, from, to, ops, types \\[:install, :reinstall, :event]) do 
+def exe_from_to_task(moudle, from, to, ops, types \\[:install, :reinstall, :event, :daily_report]) do 
     if (Enum.member?(ops, :download)) do 
         do_task(moudle, :download, from, to, types)
     end 

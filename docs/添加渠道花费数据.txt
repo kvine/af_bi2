@@ -1,0 +1,47 @@
+渠道花费信息按照地区每日聚合数据为最小单位
+数据样式为：
+Date	Country	Agency/PMD (af_prt)	Media Source (pid)	Campaign (c)	Impressions	Clicks	CTR	Installs	Conversion Rate	Sessions	Loyal Users	Loyal Users/Installs	Total Revenue	Total Cost	ROI	ARPU	Average eCPI	af_purchase (Unique users)	af_purchase (Event counter)	af_purchase (Sales in USD)	buy_all (Unique users)	buy_all (Event counter)	buy_all (Sales in USD)	buy_ball (Unique users)	buy_ball (Event counter)	buy_ball (Sales in USD)	buy_box (Unique users)	buy_box (Event counter)	buy_box (Sales in USD)	buy_coin (Unique users)	buy_coin (Event counter)	buy_coin (Sales in USD)	buy_failoffer (Unique users)	buy_failoffer (Event counter)	buy_failoffer (Sales in USD)	buy_openbox (Unique users)	buy_openbox (Event counter)	buy_openbox (Sales in USD)	buy_specialoffer (Unique users)	buy_specialoffer (Event counter)	buy_specialoffer (Sales in USD)	ce_buy_of_gvp (Unique users)	ce_buy_of_gvp (Event counter)	ce_buy_of_gvp (Sales in USD)	ce_purchase_199 (Unique users)	ce_purchase_199 (Event counter)	ce_purchase_199 (Sales in USD)	ce_purchase_499 (Unique users)	ce_purchase_499 (Event counter)	ce_purchase_499 (Sales in USD)	ce_purchase_999 (Unique users)	ce_purchase_999 (Event counter)	ce_purchase_999 (Sales in USD)	ce_purchase_day1_199 (Unique users)	ce_purchase_day1_199 (Event counter)	ce_purchase_day1_199 (Sales in USD)	ce_purchase_day1_499 (Unique users)	ce_purchase_day1_499 (Event counter)	ce_purchase_day1_499 (Sales in USD)	ce_purchase_day3_199 (Unique users)	ce_purchase_day3_199 (Event counter)	ce_purchase_day3_199 (Sales in USD)	ce_purchase_day3_499 (Unique users)	ce_purchase_day3_499 (Event counter)	ce_purchase_day3_499 (Sales in USD)	contest_0_ball_3 (Unique users)	contest_0_ball_3 (Event counter)	contest_0_ball_3 (Sales in USD)	contest_3 (Unique users)	contest_3 (Event counter)	contest_3 (Sales in USD)	contest_3_ball_1 (Unique users)	contest_3_ball_1 (Event counter)	contest_3_ball_1 (Sales in USD)	contest_3_ball_3 (Unique users)	contest_3_ball_3 (Event counter)	contest_3_ball_3 (Sales in USD)	contest_4 (Unique users)	contest_4 (Event counter)	contest_4 (Sales in USD)	contest_4_ball_1 (Unique users)	contest_4_ball_1 (Event counter)	contest_4_ball_1 (Sales in USD)	contest_4_ball_3 (Unique users)	contest_4_ball_3 (Event counter)	contest_4_ball_3 (Sales in USD)
+
+
+流程： 
+下载数据 -> 写入到db -> 写入到es
+
+下载模版： 
+https://hq.appsflyer.com/export/com.sm.golfmaster/geo_by_date_report/v5?api_token={Account owner API key should be used}&from=yyyy-mm-dd&to=yyyy-mm-dd&timezone=America%2fLos_Angeles
+
+数据类型定义为： 
+data_type: daily-report
+source_type: nil
+
+
+下载数据存储格式为： 
+daily-report_nil_{from}_{to}_{timezone}.csv 
+存储路径为：
+download_data/report/
+
+
+写入db表：
+表名： golf_bi_daily_report
+db表存储原始信息以供以后有需要查询
+key:  hash_key + range_key
+date-country, media_source-campaign 
+存储内容为所有原始数据
+
+
+写入es: 
+写入es的数据： 
+%{
+  date, #当前时区的日期
+  #date_time_stamp, #utc时间戳, 该数值不准确，不记录
+  country, 
+  media_source,
+  campaign,
+  impressions,
+  clicks,
+  ctr,
+  installs,
+  conversion,
+  cost,
+}
+
+

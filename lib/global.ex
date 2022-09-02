@@ -81,6 +81,15 @@ def db_table_name_in_reinstall_gg() do
     end 
 end 
 
+def db_table_name_daily_report() do 
+    if BI.Config.is_test do
+        BI.Config.db_table_name_daily_report<>"_test"
+    else 
+       BI.Config.db_table_name_daily_report
+    end 
+end 
+
+
 
 def es_event_install(from, to, strategy) do 
     #golf是默认的前缀，所以不需要附加
@@ -110,6 +119,15 @@ def es_event_purchase_event(from, to, strategy) do
     end 
 end 
 
+def es_daily_report_event(from, to, strategy) do
+    name= "af_daily_report_"
+    if BI.Config.event_prefix == "golf_" do 
+        wrap_es_event_name_with_reinstall_strategy(name, from, to, strategy)
+    else 
+        wrap_es_event_name_with_reinstall_strategy(BI.Config.event_prefix<>name, from, to, strategy)
+    end 
+end 
+
 
 def wrap_es_event_name_with_reinstall_strategy(event_name, from, to, strategy) do 
     cond do 
@@ -121,6 +139,7 @@ def wrap_es_event_name_with_reinstall_strategy(event_name, from, to, strategy) d
             "newgg11_"<>event_name<>from<>"_"<>to
     end 
 end 
+
 
 # BI.Global.get_reinstall_db_module(reinstall_strategy)
 def get_reinstall_db_module(reinstall_strategy) do 

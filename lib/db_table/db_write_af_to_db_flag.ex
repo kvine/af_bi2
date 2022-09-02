@@ -2,8 +2,12 @@ defmodule DB.WriteAFToDBFlag do
 
     @doc """
         用于处理是否已经写入数据库的判断
-        hash: type__did__afid__(event_time)
-        type: 0 表示的是 install， 1表示的是reinstall， 2表示的是event
+        如果为普通数据：
+            hash: type__did__afid__(event_time)
+            type: 0 表示的是 install， 1表示的是reinstall， 2表示的是event
+        如果为聚合数据： 
+            hash: date_country__mediasource_campaign
+
     """
 
     @table_name  BI.Global.db_table_name_write_af_to_db_flag

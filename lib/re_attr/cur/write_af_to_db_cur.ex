@@ -5,7 +5,11 @@ require Logger
 #  WriteAFToDB.request
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
     path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
-    datas= ReadCSV.read(path)
+    datas= if BI.Common.is_report_data(data_type) do 
+        ReadCSV.read_report_data(path)
+    else
+        ReadCSV.read(path)
+    end 
     do_request(data_type, path, datas, reinstall_strategy) 
 end 
 
@@ -18,6 +22,8 @@ def do_request(data_type,  path, datas,  reinstall_strategy) do
                 write_reinstall_data_to_db(datas, reinstall_strategy)
             data_type == BI.Keys.data_type_purchase_event  ->
                 write_purchase_event_data_to_db(datas, reinstall_strategy)
+            data_type == BI.Keys.data_type_daily_report -> 
+                write_daily_report_data_to_db(datas)
         end  
     Logger.error("write_db: data_type=#{inspect data_type},  path=#{inspect path}, \n result=#{inspect r}")
     r
@@ -345,6 +351,47 @@ def write_purchase_event_data_to_db(datas, reinstall_strategy) do
             end 
         {result, cnt + 1, success_cnt}
     end )
+end 
+
+
+def write_daily_report_data_to_db(datas) do 
+    total= length(datas)
+    List.foldl(datas, {true, 0, 0}, fn(x, {result, cnt, success_cnt}) ->  
+        Logger.info("daily report progress: #{inspect cnt}/#{inspect total}")
+        {result, success_cnt}= 
+            case write_one_daily_report_data_to_db(x) do 
+                {:ok, _} -> 
+                    {result, success_cnt + 1}
+                _ -> 
+                    {false, success_cnt}
+            end 
+        {result, cnt + 1, success_cnt}
+    end )
+end 
+
+# -> {:ok, term}| {:error, reason}
+def write_one_daily_report_data_to_db(data) do 
+    db_flag_pre= Map.get(db_flag_pre_config(:normal), BI.Keys.atom_daily_report)
+    write_flag_comb_id= BI.Common.get_write_flag_comb_id_key(db_flag_pre, BI.Keys.atom_daily_report, data, :db) 
+    case DB.WriteAFToDBFlag.is_exist?(write_flag_comb_id) do 
+        {:error,reason} -> 
+            {:error,reason} 
+        true -> 
+            Logger.info("to db exist, #{inspect write_flag_comb_id}")
+            {:ok, :exist} 
+        false -> 
+            case DB.AFDailyReport.put_item(data) do 
+                {:error,reason} -> 
+                    Logger.info("to db error,reason=#{inspect reason}")
+                    {:error,reason}  
+                {:ok, _ } ->
+                    item= %{
+                        comb_id: write_flag_comb_id,
+                        time: Time.Util.time_string()
+                    }
+                    DB.WriteAFToDBFlag.put_item(item) 
+            end 
+    end 
 end 
 
 
