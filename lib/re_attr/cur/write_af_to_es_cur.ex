@@ -155,20 +155,29 @@ def write_one_daily_report_data_to_es(es_event_name,data) do
     end 
 end 
 
+def string_to_float(s) do 
+    if s == "N/A" do 
+        -1
+    else 
+        String.to_float(s)
+    end 
+end 
+
 # -> %{}
 def wrap_daily_report_event_data(es_event_name,data) do 
+
     es_data=%{
         date: Map.get(data, BI.Keys.af_report_date),
         # date_time_stamp, #utc时间戳
         country: Map.get(data, BI.Keys.af_report_country),
         media_source: Map.get(data, BI.Keys.af_report_media_source),
         campaign: Map.get(data, BI.Keys.af_report_campaign),
-        impressions: Map.get(data, BI.Keys.af_report_impressions),
-        clicks: Map.get(data, BI.Keys.af_report_clicks),
-        ctr: Map.get(data, BI.Keys.af_report_ctr),
-        installs: Map.get(data, BI.Keys.af_report_installs),
-        conversion: Map.get(data, BI.Keys.af_report_conversion),
-        cost: Map.get(data, BI.Keys.af_reprot_cost),
+        impressions: string_to_float(Map.get(data, BI.Keys.af_report_impressions)),
+        clicks: string_to_float(Map.get(data, BI.Keys.af_report_clicks)),
+        ctr: string_to_float(Map.get(data, BI.Keys.af_report_ctr)),
+        installs: string_to_float(Map.get(data, BI.Keys.af_report_installs)),
+        conversion: string_to_float(Map.get(data, BI.Keys.af_report_conversion)),
+        cost: string_to_float(Map.get(data, BI.Keys.af_reprot_cost)),
     }
     es_data |> Map.put(:event, es_event_name)
 end 
