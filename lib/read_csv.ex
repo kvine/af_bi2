@@ -3,15 +3,20 @@ defmodule ReadCSV do
 require Logger
 
     @doc """
-        为了减少log服务器的请求处理，非重要事件只处理美国   
-        如果是内购事件数据，不过滤
+        为了减少log服务器的请求处理，只处理有效国家的数据
+        如果是内购事件数据，数据量少，不过滤
         否则，进行过滤只保留美国
     """
     def datas_filter_country_by_data_type(datas, data_type) do 
-        if data_type == BI.Keys.data_type_purchase_event do 
-            datas 
-        else 
-            Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
+        cond do 
+            data_type == BI.Keys.data_type_install  -> 
+                Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
+            data_type == BI.Keys.data_type_reinstall  -> 
+                Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
+            data_type == BI.Keys.data_type_purchase_event  ->
+               datas
+            data_type == BI.Keys.data_type_daily_report -> 
+                Enum.filter(datas, fn(x)->  Map.get(x, BI.Keys.af_report_country) == "US" end)
         end 
     end 
   
@@ -30,6 +35,8 @@ require Logger
                     Map.put(BI.Keys.ex_date_country, date_country) |> 
                     Map.put(BI.Keys.ex_mediasource_campaign, mediasource_campaign)
             end )
+          #过滤掉cost为N/A的数据
+        datas= Enum.filter(datas, fn(x) -> Map.get(x, BI.Keys.af_reprot_cost) != "N/A" end ) 
         length1= length(datas)
         Logger.error("report data: total=#{inspect length1}")
         Enum.reverse(datas)
@@ -42,7 +49,10 @@ require Logger
         country= Map.get(data, BI.Keys.af_report_country)
         media_source= Map.get(data, BI.Keys.af_report_media_source)
         campaign= Map.get(data, BI.Keys.af_report_campaign)
-        {date<>"_"<>country, media_source<>"_"<>campaign}
+        key1= date<>"_"<>country
+        key2= media_source<>"_"<>campaign
+        # Logger.info("key1=#{inspect key1}, key2=#{inspect key2}")
+        {key1, key2}
     end 
 
 

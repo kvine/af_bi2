@@ -4,7 +4,7 @@ require  Logger
 # BI.Common.get_write_flag_comb_id_key
 def get_write_flag_comb_id_key(db_flag_pre, type, data, target_type) do 
     # Logger.info("data=#{inspect data}")
-    if is_report_data(type) do
+    if is_report_data_by_atom(type) do
         date_country= Map.get(data, BI.Keys.ex_date_country)
         mediasource_campaign= Map.get(data, BI.Keys.ex_mediasource_campaign)
         db_flag_pre<>"__"<>date_country<>"__"<>mediasource_campaign
@@ -33,6 +33,10 @@ def get_write_flag_comb_id_key(db_flag_pre, type, data, target_type) do
 end 
 
 def is_report_data(data_type) do 
+    data_type ==  BI.Keys.data_type_daily_report
+end 
+
+def is_report_data_by_atom(data_type) do 
     data_type ==  BI.Keys.atom_daily_report
 end 
 
