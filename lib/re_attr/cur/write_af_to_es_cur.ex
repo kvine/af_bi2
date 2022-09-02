@@ -156,10 +156,9 @@ def write_one_daily_report_data_to_es(es_event_name,data) do
 end 
 
 def string_to_float(s) do 
-    if s == "N/A" do 
-        -1
-    else 
-        String.to_float(s)
+    case Float.parse(s) do 
+        :error -> -1
+        {v,_} -> v
     end 
 end 
 
