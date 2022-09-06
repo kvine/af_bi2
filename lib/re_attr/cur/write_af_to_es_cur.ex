@@ -162,12 +162,30 @@ def string_to_float(s) do
     end 
 end 
 
+#  WriteAFToES.Cur.test_daily_time("2022-09-04")
+def test_daily_time(date) do
+    date_time= date <> " 00:00:00"
+    date_time_mills= Time.Util.Ex.convert_format_time_to_time_mills(BI.Keys.af_time_format,date_time)
+    Logger.info("date_time_mills=#{inspect date_time_mills}")
+    time_zone=  BI.Timezone.get_af_timezone(date_time_mills)
+    Logger.info("time_zone=#{inspect time_zone}")
+    date_time_stamp= Time.Util.Ex.global_time_string(date_time, time_zone)
+    Logger.info("date=#{inspect date}, date_time=#{inspect date_time}, date_time_mills=#{inspect date_time_mills}, time_zone=#{inspect time_zone}")
+    Logger.info("date_time_stamp=#{inspect date_time_stamp}")
+end 
+
 # -> %{}
 def wrap_daily_report_event_data(es_event_name,data) do 
-
+    date= Map.get(data, BI.Keys.af_report_date)
+    date_time= date <> " 00:00:00"
+    date_time_mills= Time.Util.Ex.convert_format_time_to_time_mills(BI.Keys.af_time_format,date_time)
+    time_zone=  BI.Timezone.get_af_timezone(date_time_mills)
+    
+    
     es_data=%{
         date: Map.get(data, BI.Keys.af_report_date),
         # date_time_stamp, #utc时间戳
+        date_time_stamp: Time.Util.Ex.global_time_string(date_time, time_zone),
         country: Map.get(data, BI.Keys.af_report_country),
         media_source: Map.get(data, BI.Keys.af_report_media_source),
         campaign: Map.get(data, BI.Keys.af_report_campaign),
