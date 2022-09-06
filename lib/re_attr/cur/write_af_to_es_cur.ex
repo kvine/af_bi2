@@ -133,13 +133,13 @@ end
 def write_one_daily_report_data_to_es(es_event_name,data) do
     db_flag_pre= Map.get(db_flag_pre_config(:normal), BI.Keys.atom_daily_report)
     write_flag_comb_id= BI.Common.get_write_flag_comb_id_key(db_flag_pre, BI.Keys.atom_daily_report, data, :es) 
-    case DB.WriteAFToESFlag.is_exist?(write_flag_comb_id) do 
-        {:error,reason} -> 
-            {:error,reason} 
-        true -> 
-           Logger.info("to af exist, #{inspect write_flag_comb_id}")
-            {:ok, :exist}
-        false -> 
+    # case DB.WriteAFToESFlag.is_exist?(write_flag_comb_id) do 
+    #     {:error,reason} -> 
+    #         {:error,reason} 
+    #     true -> 
+    #        Logger.info("to af exist, #{inspect write_flag_comb_id}")
+    #         {:ok, :exist}
+    #     false -> 
             data= wrap_daily_report_event_data(es_event_name,data)
             case ES.Helper.request(data) do 
                 {:error,reason} -> 
@@ -152,7 +152,7 @@ def write_one_daily_report_data_to_es(es_event_name,data) do
                     }
                     DB.WriteAFToESFlag.put_item(item) 
             end 
-    end 
+    # end 
 end 
 
 def string_to_float(s) do 

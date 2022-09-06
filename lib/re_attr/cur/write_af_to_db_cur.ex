@@ -373,13 +373,13 @@ end
 def write_one_daily_report_data_to_db(data) do 
     db_flag_pre= Map.get(db_flag_pre_config(:normal), BI.Keys.atom_daily_report)
     write_flag_comb_id= BI.Common.get_write_flag_comb_id_key(db_flag_pre, BI.Keys.atom_daily_report, data, :db) 
-    case DB.WriteAFToDBFlag.is_exist?(write_flag_comb_id) do 
-        {:error,reason} -> 
-            {:error,reason} 
-        true -> 
-            Logger.info("to db exist, #{inspect write_flag_comb_id}")
-            {:ok, :exist} 
-        false -> 
+    # case DB.WriteAFToDBFlag.is_exist?(write_flag_comb_id) do 
+    #     {:error,reason} -> 
+    #         {:error,reason} 
+    #     true -> 
+    #         Logger.info("to db exist, #{inspect write_flag_comb_id}")
+    #         {:ok, :exist} 
+    #     false -> 
             case DB.AFDailyReport.put_item(data) do 
                 {:error,reason} -> 
                     Logger.info("to db error,reason=#{inspect reason}")
@@ -391,7 +391,7 @@ def write_one_daily_report_data_to_db(data) do
                     }
                     DB.WriteAFToDBFlag.put_item(item) 
             end 
-    end 
+    # end 
 end 
 
 
