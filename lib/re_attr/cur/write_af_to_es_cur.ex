@@ -196,7 +196,15 @@ def wrap_daily_report_event_data(es_event_name,data) do
         conversion: string_to_float(Map.get(data, BI.Keys.af_report_conversion)),
         cost: string_to_float(Map.get(data, BI.Keys.af_reprot_cost)),
     }
+    
+    #key_id
+    date_country= Map.get(data, BI.Keys.ex_date_country)
+    mediasource_campaign= Map.get(data, BI.Keys.ex_mediasource_campaign)
+    key_id= date_country<>"_"<>mediasource_campaign
+    #添加事件名和key_id
     es_data |> Map.put(:event, es_event_name)
+        |> Map.put(:key_id, key_id)
+
 end 
 
 
