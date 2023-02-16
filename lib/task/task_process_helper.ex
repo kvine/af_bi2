@@ -199,6 +199,8 @@ defmodule Game.TaskProcessHelper do
       task = %{task | end_time: Time.Util.curr_mills(), state: do_result, config: config}
 
       GenServer.cast(pid, {:complete_task, task, task_index, init_stamp})
+      
+      BI.TaskProcess.Protocol.task_finish_notify(task)
   end
 
   def complete_task(task, task_index, init_stamp, state) do
