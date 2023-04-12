@@ -15,7 +15,7 @@ require Logger
 
 
     def organic_install_url_template() do 
-        " https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_installs_report/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_installs_report/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
     end 
 
     def organic_reinstall_url_template() do 
