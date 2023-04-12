@@ -31,17 +31,6 @@ require Logger
         "https://hq1.appsflyer.com/api/agg-data/export/app/{appid}/geo_by_date_report/v5?from={from}&to={to}&timezone={timezone}"
     end 
 
-    # DownloadCSV.V2.save_path_template
-    def save_path_template() do 
-        project_path= BI.Config.project_path()
-        Path.join(project_path, download_path())
-    end 
-
-    def download_path() do 
-        "download_data/{data_type}_{source_type}/{data_type}_{source_type}_{from}_{to}_{timezone}.csv"
-    end 
-
-
     # DownloadCSV.V2.request()
     def request_test() do 
         data_type= BI.Keys.data_type_purchase_event
@@ -56,7 +45,7 @@ require Logger
     def request(data_type, source_type, from, to, timezone) do 
          url= get_url(data_type, source_type, from, to, timezone) 
             |> String.to_charlist()
-        save_path=  get_save_path(save_path_template(), data_type, source_type, from, to, timezone) |> String.to_charlist
+        save_path=  DownloadCSV.get_save_path(data_type, source_type, from, to, timezone) |> String.to_charlist
         Logger.info("url=#{inspect url}")
         Logger.info("save_path=#{inspect save_path}")
         if File.exists?(save_path) do 
@@ -67,21 +56,6 @@ require Logger
         headers= [{'accept', 'text/csv'}, {'authorization', authorization}]
         {:ok, :saved_to_file} =  DownloadCSV.download(url, headers, save_path, 0, 2, 61_000)
         Logger.error("download success! path=#{inspect save_path}")
-    end 
-
-
-    def get_save_path(data_type, source_type, from, to, timezone) do
-        get_save_path(save_path_template(), data_type, source_type, from, to, timezone)
-    end 
-    def get_save_path(save_path_template, data_type, source_type, from, to, timezone) do
-        timezone= URI.decode(timezone) |> String.replace("/", "_")
-        save_path_template
-            |> String.replace("{data_type}", data_type) 
-                |> String.replace("{source_type}", source_type) 
-                |> String.replace("{from}", from)
-                |> String.replace("{to}", to)
-                |> String.replace("{to}", to)
-                |> String.replace("{timezone}", timezone)
     end 
 
     @doc """
