@@ -2,28 +2,28 @@ defmodule DownloadCSV.V2 do
 require Logger
 
     def non_organic_install_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/installs_report/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
     end 
 
     def non_organic_reinstall_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/reinstalls/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/reinstalls/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
     end 
 
     def non_organic_purchase_event_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
     end 
 
 
     def organic_install_url_template() do 
-        " https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
+        " https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_installs_report/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
     end 
 
     def organic_reinstall_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/reinstalls_organic/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/reinstalls_organic/v5?from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
     end 
 
     def organic_purchase_event_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
    
     end 
 
