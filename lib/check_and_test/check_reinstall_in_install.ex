@@ -85,7 +85,7 @@ require Logger
     end 
 
     def get_reinstall_ids(data_type, source_type, from, to, timezone) do 
-        path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+        path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         datas= ReadCSV.read_by_did_nil(path)
         # Enum.map(datas,fn(x)-> Map.get(x, BI.Keys.ex_did) end)
         Enum.map(datas,fn(x)-> Map.get(x, BI.Keys.af_appsflyer_id) end)
@@ -94,7 +94,7 @@ require Logger
     #  m=Check.ReinstallInInstall.get_install_ids_map(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-11-22", "2021-11-28", BI.Config.timezone)
     #  m=Check.ReinstallInInstall.get_install_ids_map(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-11-22", "2021-11-28", BI.Config.timezone)
     def get_install_ids_map(data_type, source_type, from, to, timezone) do 
-        path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+        path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         datas= ReadCSV.read(path)
         Map.new(datas,fn(x)-> { {Map.get(x, BI.Keys.ex_did), Map.get(x, BI.Keys.af_appsflyer_id)}, ""} end)
         # Map.new(datas,fn(x)-> { Map.get(x, BI.Keys.af_appsflyer_id), ""} end)
@@ -103,7 +103,7 @@ require Logger
     #m=Check.ReinstallInInstall.get_repeated_ids(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-11-22", "2021-11-28", BI.Config.timezone)
     # m=Check.ReinstallInInstall.get_repeated_ids(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-11-22", "2021-11-28", BI.Config.timezone)
     def get_repeated_ids(data_type, source_type, from, to, timezone) do 
-        path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+        path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         datas= ReadCSV.read(path)
         {rl,_rm}=
         List.foldl(datas, {[],%{}}, fn(x,{l,m}) ->  
@@ -120,10 +120,10 @@ require Logger
 
     # m=Check.ReinstallInInstall.get_repeated_ids(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, BI.Keys.source_type_organic, "2021-11-22", "2021-11-28", BI.Config.timezone)
      def get_repeated_ids(data_type, source_type, source_type2, from, to,  timezone) do 
-        path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+        path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         datas1= ReadCSV.read(path)
 
-        path= DownloadCSv.get_save_path(data_type, source_type2, from, to, timezone)
+        path= DownloadCSV.get_save_path(data_type, source_type2, from, to, timezone)
         datas2= ReadCSV.read(path)
 
         datas= Enum.concat(datas1, datas2)

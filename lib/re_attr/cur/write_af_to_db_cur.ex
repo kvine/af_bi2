@@ -4,7 +4,7 @@ require Logger
 
 #  WriteAFToDB.request
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= if BI.Common.is_report_data(data_type) do 
         ReadCSV.read_report_data(path)
     else

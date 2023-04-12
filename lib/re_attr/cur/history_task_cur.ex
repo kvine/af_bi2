@@ -2,31 +2,31 @@ defmodule BI.HistoryTask.Cur do
 
     def download_history_data() do 
         # install 
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-09-06", "2021-10-03", BI.Config.timezone)  #finish
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-10-04", "2021-10-31", BI.Config.timezone)  #finish
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-11-01", "2021-11-28", BI.Config.timezone)  #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-09-06", "2021-10-03", BI.Config.timezone)  #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-10-04", "2021-10-31", BI.Config.timezone)  #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, "2021-11-01", "2021-11-28", BI.Config.timezone)  #finish
 
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
 
         #reinsall 
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
 
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-09-06", "2021-10-03", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-10-04", "2021-10-31", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, "2021-11-01", "2021-11-28", BI.Config.timezone) #finish
 
         #purchase-event 
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-08", "2021-11-14", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-15", "2021-11-21", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-22", "2021-11-28", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-08", "2021-11-14", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-15", "2021-11-21", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, "2021-11-22", "2021-11-28", BI.Config.timezone) #finish
 
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-08", "2021-11-14", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-15", "2021-11-21", BI.Config.timezone) #finish
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-22", "2021-11-28", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-08", "2021-11-14", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-15", "2021-11-21", BI.Config.timezone) #finish
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, "2021-11-22", "2021-11-28", BI.Config.timezone) #finish
 
     end 
 

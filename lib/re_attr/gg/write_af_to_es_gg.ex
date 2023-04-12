@@ -5,7 +5,7 @@ require Logger
 #  WriteAFToES.request
 # -> {result, cnt, success_cnt}
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= ReadCSV.read(path)
     #只处理美国的用户
     datas= Enum.filter(datas, fn(x)-> Map.get(x, BI.Keys.af_country_code) == "US" end)
@@ -14,7 +14,7 @@ end
 
 
 def request_by_did_nil(data_type, source_type, from, to, timezone, reinstall_strategy) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= ReadCSV.read_by_did_nil(path)
     do_request(data_type, from, to,  path, datas, reinstall_strategy) 
 end 

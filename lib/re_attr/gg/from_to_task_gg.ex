@@ -5,18 +5,18 @@ def do_task(:download, from, to, types) do
     Logger.info("FromToTask: from=#{inspect from}, to=#{inspect to}, download, start")
 
     if(Enum.member?(types, :install)) do 
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone)  
-        DownloadCSv.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, from, to, BI.Config.timezone)  
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone)  
+        DownloadCSV.request(BI.Keys.data_type_install, BI.Keys.source_type_organic, from, to, BI.Config.timezone)  
     end 
 
     if(Enum.member?(types, :reinstall)) do 
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone) 
-        DownloadCSv.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, from, to, BI.Config.timezone)
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone) 
+        DownloadCSV.request(BI.Keys.data_type_reinstall, BI.Keys.source_type_organic, from, to, BI.Config.timezone)
     end 
 
     if(Enum.member?(types, :event)) do 
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone) 
-        DownloadCSv.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, from, to, BI.Config.timezone) 
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_non_organic, from, to, BI.Config.timezone) 
+        DownloadCSV.request(BI.Keys.data_type_purchase_event, BI.Keys.source_type_organic, from, to, BI.Config.timezone) 
     end 
 
     Logger.info("FromToTask: from=#{inspect from}, to=#{inspect to}, download, end")

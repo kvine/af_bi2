@@ -1,154 +1,36 @@
-defmodule DownloadCSv do 
+defmodule DownloadCSV do 
 require Logger
 
-    def non_organic_install_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,install_app_store,contributor1_match_type,contributor2_match_type,contributor3_match_type,match_type,device_category,gp_referrer,gp_click_time,gp_install_begin,amazon_aid,keyword_match_type,att,conversion_type,campaign_type,is_lat&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
-    end 
-
-    def non_organic_reinstall_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/reinstalls/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,install_app_store,contributor1_match_type,contributor2_match_type,contributor3_match_type,match_type,device_category,gp_referrer,gp_click_time,gp_install_begin,amazon_aid,keyword_match_type,att,conversion_type,campaign_type,is_lat&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/reinstalls/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
-    end 
-
-    def non_organic_purchase_event_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,install_app_store,contributor1_match_type,contributor2_match_type,contributor3_match_type,match_type,device_category,gp_referrer,gp_click_time,gp_install_begin,amazon_aid,keyword_match_type,att,conversion_type,campaign_type,is_lat&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
-    end 
-
-
-    def organic_install_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/organic_installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,install_app_store,gp_referrer,gp_click_time,gp_install_begin,amazon_aid,keyword_match_type,att,conversion_type,campaign_type,is_lat&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/organic_installs_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
-    end 
-
-    def organic_reinstall_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/reinstalls_organic/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,install_app_store,contributor1_match_type,contributor2_match_type,contributor3_match_type,match_type,device_category,gp_referrer,gp_click_time,gp_install_begin,amazon_aid,keyword_match_type,att,conversion_type,campaign_type,is_lat&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/reinstalls_organic/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&maximum_rows=1000000"
-    end 
-
-    def organic_purchase_event_url_template() do 
-        # "https://hq.appsflyer.com/export/{appid}/organic_in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&additional_fields=device_model,keyword_id,store_reinstall,deeplink_url,oaid,amazon_aid,keyword_match_type,att,conversion_type,campaign_type&maximum_rows=1000000"
-        "https://hq.appsflyer.com/export/{appid}/organic_in_app_events_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
-    end 
-
-    def daily_report_template() do 
-        # https://hq.appsflyer.com/export/com.sm.golfmaster/geo_by_date_report/v5?api_token={Account owner API key should be used}&from=yyyy-mm-dd&to=yyyy-mm-dd&timezone=America%2fLos_Angeles
-        "https://hq.appsflyer.com/export/{appid}/geo_by_date_report/v5?api_token={token}&from={from}&to={to}&timezone={timezone}"
-    end 
-
-    # DownloadCSv.save_path_template
-    def save_path_template() do 
-        project_path= BI.Config.project_path()
-        Path.join(project_path, download_path())
-    end 
-
-    def download_path() do 
-        "download_data/{data_type}_{source_type}/{data_type}_{source_type}_{from}_{to}_{timezone}.csv"
-    end 
-
-
-    
-    # def test_request() do 
-    #     {:ok, :saved_to_file} = :httpc.request(:get, {url(), []}, [], [stream: './tmp/elixir'])
-    # end 
-
-    # DownloadCSv.request()
-    def request_test() do 
-        data_type= BI.Keys.data_type_purchase_event
-        source_type= BI.Keys.source_type_non_organic
-        from= "2021-11-15"
-        to= "2021-11-21"
-        timezone= "America%2fLos_Angeles"
-        # timezone="UTC"
-
-        url= get_url(data_type, source_type, BI.Global.api_token_v1, from, to, timezone) 
-            |> String.to_charlist()
-        # url= url()
-        save_path=  get_save_path(save_path_template(), data_type, source_type, from, to, timezone) |> String.to_charlist
-
-        Logger.info("save_path=#{inspect save_path}")
-        if File.exists?(save_path) do 
-            Logger.info("file exist, delete")
-            File.rm(save_path)
-        end 
-
-        {:ok, :saved_to_file} = :httpc.request(:get, {url, []}, [], [stream: save_path ])
-        Logger.error("download success! path=#{inspect save_path}")
-    end 
-
-    
     def request(data_type, source_type, from, to, timezone) do 
-         url= get_url(data_type, source_type, BI.Global.api_token_v1, from, to, timezone) 
-            |> String.to_charlist()
-        save_path=  get_save_path(save_path_template(), data_type, source_type, from, to, timezone) |> String.to_charlist
-        Logger.info("url=#{inspect url}")
-        Logger.info("save_path=#{inspect save_path}")
-        if File.exists?(save_path) do 
-            Logger.info("file exist, delete")
-            File.rm(save_path)
+        use_af_api_token_v2= Application.get_env(:af_bi, :use_af_api_token_v2, true)
+        if use_af_api_token_v2 do 
+            DownloadCSV.V2.request(data_type, source_type, from, to, timezone)
+        else 
+            DownloadCSV.V1.request(data_type, source_type, from, to, timezone)
         end 
-        {:ok, :saved_to_file} = :httpc.request(:get, {url, []}, [], [stream: save_path ])
-        Logger.error("download success! path=#{inspect save_path}")
-    end 
+   end 
 
-
-    def get_save_path(data_type, source_type, from, to, timezone) do
-        get_save_path(save_path_template(), data_type, source_type, from, to, timezone)
-    end 
-    def get_save_path(save_path_template, data_type, source_type, from, to, timezone) do
-        timezone= URI.decode(timezone) |> String.replace("/", "_")
-        save_path_template
-            |> String.replace("{data_type}", data_type) 
-                |> String.replace("{source_type}", source_type) 
-                |> String.replace("{from}", from)
-                |> String.replace("{to}", to)
-                |> String.replace("{to}", to)
-                |> String.replace("{timezone}", timezone)
-    end 
-
+   
     @doc """
-        from= "2021-11-15"
-        to= "2021-11-21"
-        timezone= "America%2fLos_Angeles"
-        DownloadCSv.get_url("purchase-event","organic", BI.Global.api_token_v1, from, to, timezone)
+        下载文件，如果下载失败，可再尝试下载，最多下载 max_download_cnt
+        为了防止尝试过多，一般设置  max_download_cnt 为2次
+        sleep_time_mills 时间设置为61s  61_000, 主要考虑到 kibana的后台拉取数据可能有时间限制
     """
-    def get_url(data_type, source_type, token, from, to, timezone) do 
-        tmp_url= 
-            cond do 
-                data_type == BI.Keys.data_type_install()  -> 
-                    cond do 
-                        source_type == BI.Keys.source_type_organic() -> 
-                            organic_install_url_template()
-                        source_type == BI.Keys.source_type_non_organic() -> 
-                            non_organic_install_url_template()
-                    end 
-                data_type == BI.Keys.data_type_reinstall()  -> 
-                    cond do 
-                        source_type == BI.Keys.source_type_organic() -> 
-                            organic_reinstall_url_template()
-                        source_type == BI.Keys.source_type_non_organic() -> 
-                            non_organic_reinstall_url_template()
-                    end 
-                data_type == BI.Keys.data_type_purchase_event()  -> 
-                    cond do 
-                        source_type == BI.Keys.source_type_organic() -> 
-                            organic_purchase_event_url_template()
-                        source_type == BI.Keys.source_type_non_organic() -> 
-                            non_organic_purchase_event_url_template()
-                    end 
-                data_type == BI.Keys.data_type_daily_report() ->
-                    daily_report_template()
-            end 
-        #先给decode下，防止之前误写的格式有问题
-        timezone=  URI.decode(timezone) |> URI.encode_www_form
-        tmp_url |> String.replace("{token}", token) 
-                |> String.replace("{from}", from) 
-                |> String.replace("{to}", to)
-                |> String.replace("{timezone}", timezone)
-                |> String.replace("{appid}", BI.Global.appid)
+    def download(url, headers, save_path, download_cnt, max_download_cnt, sleep_time_mills) do 
+        case :httpc.request(:get, {url, headers}, [], [stream: save_path ]) do 
+            {:ok, result} -> 
+                {:ok, result} 
+            {:error, reason} -> 
+                if download_cnt < max_download_cnt do 
+                    Logger.info("download error, reason=#{inspect reason}, wait #{inspect sleep_time_mills} to next download: #{inspect download_cnt + 1 }")
+                    Process.sleep(sleep_time_mills)
+                    download(url, headers, save_path, download_cnt + 1, max_download_cnt, sleep_time_mills)
+                else 
+                    Logger.error("download error, reason=#{inspect reason}")
+                    {:error, reason}
+                end 
+        end 
     end 
-    
 
 
 end 

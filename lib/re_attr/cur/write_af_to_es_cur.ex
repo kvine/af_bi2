@@ -3,7 +3,7 @@ require Logger
 
 # WriteAFToES.test_request()
 def test_request(data_type, source_type, from, to, timezone, reinstall_strategy, af_id) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= if BI.Common.is_report_data(data_type) do 
         ReadCSV.read_report_data(path)
     else
@@ -16,7 +16,7 @@ end
 #  WriteAFToES.request
 # -> {result, cnt, success_cnt}
 def request(data_type, source_type, from, to, timezone, reinstall_strategy) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= if BI.Common.is_report_data(data_type) do 
         ReadCSV.read_report_data(path)
     else
@@ -28,7 +28,7 @@ end
 
 
 def request_by_did_nil(data_type, source_type, from, to, timezone, reinstall_strategy) do 
-    path= DownloadCSv.get_save_path(data_type, source_type, from, to, timezone)
+    path= DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
     datas= ReadCSV.read_by_did_nil(path)
     do_request(data_type, from, to,  path, datas, reinstall_strategy) 
 end 
