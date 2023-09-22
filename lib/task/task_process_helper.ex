@@ -184,22 +184,26 @@ defmodule Game.TaskProcessHelper do
 
 
   def doing_task(pid, task, task_index, init_stamp) do
-      DB.TaskStatus.Entity.update_task_status(:doing, task)
-
-      %{task_module: task_module, task_status: task_status, task_type: task_type} = task.config
-
-      {new_status, do_result} = task_module.do_task(task_status, task_type)
-
-    #   new_status= task_status
-    #   do_result= TaskState.do_complete
-
-      Logger.info("doing_task, config=#{inspect task.config}")
+    Logger.info("doing_task, config=#{inspect task.config}")
+    DB.TaskStatus.Entity.update_task_status(:doing, task)
+    %{task_module: task_module, task_status: task_status, task_type: task_type} = task.config
+    {new_status, do_result}= 
+        try do 
+            task_module.do_task(task_status, task_type)
+        rescue 
+            error -> 
+                Logger.error("************ doing_task rescue error: #{inspect error}")
+                {task_status, TaskState.do_failed}
+        catch
+            :exit, reason -> 
+                Logger.error("************ doing_task exit reason: #{inspect reason}")
+                {task_status, TaskState.do_failed}
+        end 
 
       config = %{task.config | task_status: new_status}
       task = %{task | end_time: Time.Util.curr_mills(), state: do_result, config: config}
-
       GenServer.cast(pid, {:complete_task, task, task_index, init_stamp})
-      
+      #send notify msg
       BI.TaskProcess.Protocol.task_finish_notify(task)
   end
 

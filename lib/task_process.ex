@@ -2,6 +2,19 @@ defmodule Game.TaskProcess do
   use GenServer
   require Logger
 
+  # Game.TaskProcess
+  def get_tasks() do 
+      pid = Game.TaskProcess.get_pid()
+      GenServer.call(pid, :query_tasks)
+  end 
+
+  # Game.reload_tasks
+  def reload_tasks() do 
+      pid = Game.TaskProcess.get_pid()
+      GenServer.cast(pid, {:reload})
+  end 
+
+
   def get_pid() do
     case :erlang.whereis(__MODULE__) do
         :undefined ->
