@@ -18,11 +18,20 @@ require Logger
     """
     def download(url, headers, save_path, download_cnt, max_download_cnt, sleep_time_mills) do 
         case :httpc.request(:get, {url, headers}, [], [stream: save_path ]) do 
+            {:ok, :saved_to_file} -> 
+                {:ok, :saved_to_file}
             {:ok, result} -> 
-                {:ok, result} 
+                if download_cnt < max_download_cnt do 
+                    Logger.error("download error: ok not match, result=#{inspect result}, wait #{inspect sleep_time_mills} to next download: #{inspect download_cnt + 1 }")
+                    Process.sleep(sleep_time_mills)
+                    download(url, headers, save_path, download_cnt + 1, max_download_cnt, sleep_time_mills)
+                else 
+                    Logger.error("download error: ok but not match , result=#{inspect result}")
+                    {:ok, result} 
+                end 
             {:error, reason} -> 
                 if download_cnt < max_download_cnt do 
-                    Logger.info("download error, reason=#{inspect reason}, wait #{inspect sleep_time_mills} to next download: #{inspect download_cnt + 1 }")
+                    Logger.error("download error, reason=#{inspect reason}, wait #{inspect sleep_time_mills} to next download: #{inspect download_cnt + 1 }")
                     Process.sleep(sleep_time_mills)
                     download(url, headers, save_path, download_cnt + 1, max_download_cnt, sleep_time_mills)
                 else 

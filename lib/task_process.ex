@@ -2,13 +2,13 @@ defmodule Game.TaskProcess do
   use GenServer
   require Logger
 
-  # Game.TaskProcess
+  # Game.TaskProcess.get_tasks
   def get_tasks() do 
       pid = Game.TaskProcess.get_pid()
       GenServer.call(pid, :query_tasks)
   end 
 
-  # Game.reload_tasks
+  # Game.TaskProcess.reload_tasks
   def reload_tasks() do 
       pid = Game.TaskProcess.get_pid()
       GenServer.cast(pid, {:reload})
