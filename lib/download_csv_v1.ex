@@ -45,18 +45,28 @@ require Logger
 
     
     def request(data_type, source_type, from, to, timezone) do 
-         url= get_url(data_type, source_type, BI.Global.api_token_v1, from, to, timezone) 
-            |> String.to_charlist()
-        save_path=  DownloadCSV.get_save_path(data_type, source_type, from, to, timezone) |> String.to_charlist
+        #  url= get_url(data_type, source_type, BI.Global.api_token_v1, from, to, timezone) 
+        #     |> String.to_charlist()
+        # save_path=  DownloadCSV.get_save_path(data_type, source_type, from, to, timezone) |> String.to_charlist
+        # Logger.info("url=#{inspect url}")
+        # Logger.info("save_path=#{inspect save_path}")
+        # if File.exists?(save_path) do 
+        #     Logger.info("file exist, delete")
+        #     File.rm(save_path)
+        # end 
+        # headers= []
+        # {:ok, :saved_to_file} =  DownloadCSV.download(url, headers, save_path, 0, 2, 61_000)
+        # Logger.error("download success! path=#{inspect save_path}")
+
+
+        url= get_url(data_type, source_type, from, to, timezone) 
+        save_path=  DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         Logger.info("url=#{inspect url}")
         Logger.info("save_path=#{inspect save_path}")
-        if File.exists?(save_path) do 
-            Logger.info("file exist, delete")
-            File.rm(save_path)
-        end 
         headers= []
         {:ok, :saved_to_file} =  DownloadCSV.download(url, headers, save_path, 0, 2, 61_000)
         Logger.error("download success! path=#{inspect save_path}")
+        
     end 
 
 
