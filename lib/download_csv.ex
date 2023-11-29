@@ -17,7 +17,7 @@ require Logger
         sleep_time_mills 时间设置为61s  61_000, 主要考虑到 kibana的后台拉取数据可能有时间限制
     """
     def download(url, headers, save_path, download_cnt, max_download_cnt, sleep_time_mills) do 
-        case HTTPoison.get(url, headers, [timeout: 2*60_000, follow_redirect: true]) do 
+        case HTTPoison.get(url, headers, [timeout: 120000, recv_timeout: 120000, follow_redirect: true]) do 
             {:ok, response} -> 
                 case File.write(save_path, response.body) do 
                     :ok -> 
