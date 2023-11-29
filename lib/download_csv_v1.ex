@@ -59,7 +59,7 @@ require Logger
         # Logger.error("download success! path=#{inspect save_path}")
 
 
-        url= get_url(data_type, source_type, from, to, timezone) 
+        url= get_url(data_type, source_type, BI.Global.api_token_v1, from, to, timezone) 
         save_path=  DownloadCSV.get_save_path(data_type, source_type, from, to, timezone)
         Logger.info("url=#{inspect url}")
         Logger.info("save_path=#{inspect save_path}")
