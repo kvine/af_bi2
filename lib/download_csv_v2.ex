@@ -10,7 +10,7 @@ require Logger
     end 
 
     def non_organic_purchase_event_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase,af_subscribe,trail_convert,trial_covert&maximum_rows=1000000"
     end 
 
 
@@ -23,7 +23,7 @@ require Logger
     end 
 
     def organic_purchase_event_url_template() do 
-        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase&maximum_rows=1000000"
+        "https://hq1.appsflyer.com/api/raw-data/export/app/{appid}/organic_in_app_events_report/v5?from={from}&to={to}&timezone={timezone}&event_name=af_purchase,af_subscribe,trail_convert,trial_covert&maximum_rows=1000000"
    
     end 
 
