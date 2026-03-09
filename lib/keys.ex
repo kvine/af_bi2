@@ -12,6 +12,7 @@ defmodule BI.Keys do
     def af_appsflyer_id, do: "AppsFlyer ID"
     def af_install_time, do: "Install Time"
     def af_event_time, do: "Event Time"
+    def af_event_name, do: "Event Name"
     def af_android_id, do: "Android ID"
     def af_advertising_id, do: "Advertising ID"
     def af_imei, do: "IMEI"

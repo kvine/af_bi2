@@ -209,10 +209,13 @@ end
 
 
 def wrap_purchase_event_data(es_event_name,data, reinstall_strategy) do 
-     #基本数据和install一致
+    #基本数据和install一致
     revenue= String.to_float(Map.get(data, BI.Keys.af_revenue, "0"))
+    #添加了event_name字段用于区分不同的事件类型（因为购买事件可能会有多个事件名，内购或订阅），如果没有这个字段，就默认是"nil"
+    event_name= Map.get(data, BI.Keys.af_event_name, "nil")
     data1= wrap_install_data(es_event_name, data)  
             |> Map.put(:revenue, revenue)
+            |> Map.put(:pur_event_name, event_name)
     #查reinstall数据库获取reinstall的re-attrubition
     did=  Map.get(data, BI.Keys.ex_did)
     afid= Map.get(data, BI.Keys.af_appsflyer_id)
